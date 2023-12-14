@@ -126,3 +126,6 @@ We use [`Polara` framework]() for orchestrating some parts of the experiments. Y
 conda activate satf
 pip install --no-cache-dir --upgrade git+https://github.com/evfro/polara.git@develop#egg=polara
 ```
+
+# Acknowledgements
+This work is supported by the [RSCF Grant 22-21-00911](https://rscf.ru/en/project/22-21-00911/).
