@@ -98,7 +98,7 @@ def sa_hooi(
         uw = u1 * scaling_weights[:, np.newaxis]
 
         ttm2 = ttm[2](*tensor_data, uw, u0, ((1, 0), (0, 0)), *index_data[2]).reshape(shape[2], r0*r1)
-        u2, ss, _ = svd(ttm2, **svd_config(r2))
+        u2, ss, _ = svd(attention_matrix.T.dot(ttm2), **svd_config(r2))
         ua = attention_matrix.dot(u2)
 
         factors = (u0, u1, u2)
