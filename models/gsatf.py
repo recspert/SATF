@@ -94,7 +94,7 @@ def sa_hooi(
         u0, *_ = svd(ttm0, **svd_config(r0))
 
         ttm1 = ttm[1](*tensor_data, ua, u0, ((2, 0), (0, 0)), *index_data[1]).reshape(shape[1], r0*r2)
-        u1, *_ = svd(ttm1, **svd_config(r1))
+        u1, *_ = svd(ttm1 * scaling_weights[:, np.newaxis], **svd_config(r1))
         uw = u1 * scaling_weights[:, np.newaxis]
 
         ttm2 = ttm[2](*tensor_data, uw, u0, ((1, 0), (0, 0)), *index_data[2]).reshape(shape[2], r0*r1)
