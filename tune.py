@@ -26,7 +26,8 @@ if __name__ == "__main__":
         args,
         grid_skip=grid_skip,
         sweep_args=sweep_args,
-        ts=ts
+        ts=ts,
+        model_factory=model_factory
     )
     # perform test score evaluation
     print('\nRunning final test\n')

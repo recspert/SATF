@@ -49,7 +49,7 @@ def sweep_grid(sweep_id, param_names):
             param_grid.add(params)
     return param_grid
 
-def run_grid_search(grid_step_call, args, grid_skip=None, sweep_args=None, ts=None):
+def run_grid_search(grid_step_call, args, grid_skip=None, sweep_args=None, ts=None, model_factory=None):
     grid_config = import_config(args.grid_config, configs_dir='grids')
     save_config(args.res_dir, args.dataset, join_str(args.model, ts), validate_ranges(grid_config), suffix='grid')
     skip_config = None
@@ -77,7 +77,10 @@ def run_grid_search(grid_step_call, args, grid_skip=None, sweep_args=None, ts=No
         get_wandb(args.bypass_wandb).agent(
             sweep_id,
             function=grid_step_call(args, param_grid, param_names, ts=ts),
-            count=max_grid_steps
+            count=max_grid_steps,
+            args=args,
+            ts=ts,
+            model_factory=model_factory
         )
     except KeyboardInterrupt:
         pass # allow running test if experiment is interrupted by user

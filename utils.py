@@ -187,9 +187,23 @@ class DummyWandb:
     def agent(self, sid, function, count=None, **kwargs):
         if count is None:
             count = 1
+
+        # Extract test parameters from kwargs
+        args = kwargs.get('args', None) 
+        ts = kwargs.get('ts', None)
+        model_factory = kwargs.get('model_factory', None)
+
         for i in range(count):
             print(f'\n=== Experiment run: {i+1} ===\n')
             function()
+
+            # Run test if needed
+            if args and model_factory and args.test_every > 0 and (i + 1) % args.test_every == 0:
+                print(f'\n=== Running test evaluation at step {i+1} ===')
+                from gridsearch import run_test
+                test_ts = f"{ts}_step_{i+1}"
+                run_test(model_factory, test_ts, args)
+
 
 def import_source_as_module(source_path):
     'Importing module from a specified path.'
@@ -219,6 +233,7 @@ def parse_args(test=False):
     parser.add_argument('--sweep', default=None, type=str)
     parser.add_argument('--name', default=None, type=str)
     parser.add_argument('--bypass_wandb', default=False, action="store_true")
+    parser.add_argument('--test_every', default=0, type=int, help='Run test evaluation every N grid steps (0 = disabled)')
     if not test:
         parser.add_argument('--grid_config', required=True, type=str)
     else:
