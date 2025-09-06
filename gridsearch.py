@@ -163,12 +163,19 @@ def get_test_config(args, summary_params=None):
     return config
 
 
-def run_test(model_factory, ts, args, dest_sweep=None, config=None):
+def run_test(model_factory, ts, args, dest_sweep=None, config=None, step_number=None):
     label = join_str(args.model, ts)
+    
+    # For result files, append step suffix if it's a periodic test
+    result_label = label
+    if step_number is not None:
+        result_label = f"{label}_step_{step_number}"
+    
     if not config: # when test is called from tune.py or when model has no params
         try:
             args.skip_params # for parameterless models, e.g. MP
         except AttributeError:
+            # Always use base label for config (no step suffix)
             config = load_config(args.res_dir, args.dataset, label, suffix='config')
     
     _, dataset = read_dataset(args.dataset, args.time_offsets, stepwise_eval=False, part='test')
@@ -177,7 +184,7 @@ def run_test(model_factory, ts, args, dest_sweep=None, config=None):
     
     scores = {metric: res['score'] for metric, res in test_results.items()}
     errors = {metric: res['error'] for metric, res in test_results.items()}
-    res_file = save_config(args.res_dir, args.dataset, label, {'scores': scores, 'errors': errors}, suffix='result')
+    res_file = save_config(args.res_dir, args.dataset, result_label, {'scores': scores, 'errors': errors}, suffix='result')
     print_scores(scores, errors)
     # upload results to wandb (or just show paths to files)
     save_results(dest_sweep, res_file, bypass_wandb=args.bypass_wandb)

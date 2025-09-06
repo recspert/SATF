@@ -201,8 +201,7 @@ class DummyWandb:
             if args and model_factory and args.test_every > 0 and (i + 1) % args.test_every == 0:
                 print(f'\n=== Running test evaluation at step {i+1} ===')
                 from gridsearch import run_test
-                test_ts = f"{ts}_step_{i+1}"
-                run_test(model_factory, test_ts, args)
+                run_test(model_factory, ts, args, step_number=i+1)
 
 
 def import_source_as_module(source_path):
