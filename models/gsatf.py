@@ -167,6 +167,7 @@ class SequentialTensor(HitPredictionMixin, ItemProjectorMixin, CoffeeModel):
         exponential_decay=False,
         reversed_attention=False,
         stochastic_attention_axis=None,
+        lower=False,
         scaling=1.0,
         randomized=True,
         **kwargs
@@ -181,6 +182,7 @@ class SequentialTensor(HitPredictionMixin, ItemProjectorMixin, CoffeeModel):
         self.exponential_decay = exponential_decay
         self.reversed_attention = reversed_attention
         self.stochastic_attention_axis = stochastic_attention_axis
+        self.lower = lower
         self.rescaled = False
         self.scaling = scaling
         self.scaling_weights = None
@@ -220,6 +222,7 @@ class SequentialTensor(HitPredictionMixin, ItemProjectorMixin, CoffeeModel):
             span = self.attention_span,
             exponential_decay=self.exponential_decay,
             reverse = self.reversed_attention,
+            lower = self.lower,
             stochastic_axis = self.stochastic_attention_axis,
             format = 'csr'
         )
