@@ -126,12 +126,16 @@ def attention_weights(decay_factor, cutoff, max_elements=None, exponential_decay
         return list(reversed(list(weights)))
     return list(weights)
 
-def form_attention_matrix(size, decay_factor, cutoff=0, span=0, exponential_decay=False, reverse=False, format='csc', stochastic_axis=None, dtype=None):
+def form_attention_matrix(size, decay_factor, *, cutoff=0, span=0, exponential_decay=False, reverse=False, lower=False, format='csc', stochastic_axis=None, dtype=None):
     stochastic = stochastic_axis is not None
     span = min(span or np.iinfo('i8').max, size)
     weights = attention_weights(decay_factor, cutoff=cutoff, max_elements=span, exponential_decay=exponential_decay, reverse=reverse)
     diag_values = [np.broadcast_to(w, size) for w in weights]
-    matrix = diags(diag_values, offsets=range(0, -len(diag_values), -1), format=format, dtype=dtype)
+    if lower:
+        offsets=range(0, -len(diag_values), -1)
+    else:
+        offsets=range(0, len(diag_values), 1)
+    matrix = diags(diag_values, offsets=offsets, format=format, dtype=dtype)
     if stochastic:
         scalings = matrix.sum(axis=stochastic_axis).A.squeeze()
         if stochastic_axis == 0:
