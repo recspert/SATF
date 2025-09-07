@@ -111,7 +111,8 @@ def train_validate(args, param_grid, param_names, ts=None):
                     except StopIteration: # early stopping condition met
                         break
             score_best = {metric: res['score'] for metric, res in model_best_results.items()}
-            epoch_best = param_config['epoch']
+            # Handle case where epoch wasn't set due to early stopping without improvement
+            epoch_best = param_config.get('epoch', 1)  # Default to 1 if not set
             run.summary.update({'epoch': epoch_best, **score_best}) # display only the best run results once finished
         sampler.close()
     check_early_stop.fail_count = 0 # initialize early stopping

@@ -82,7 +82,9 @@ def train_validate(args, param_grid, param_names, ts=None):
         with get_wandb(args.bypass_wandb).init(config=param_config) as run:
             model.build(callback=evaluation_callback(run, model_best_results, param_config))
             score_best = {metric: res['score'] for metric, res in model_best_results.items()}
-            run.summary.update({'num_iters': param_config['num_iters'], **score_best}) # display only the best run results once finished
+            # Handle case where num_iters wasn't set due to early stopping without improvement
+            num_iters = param_config.get('num_iters', 1)  # Default to 1 if not set
+            run.summary.update({'num_iters': num_iters, **score_best}) # display only the best run results once finished
     check_early_stop.fail_count = 0 # initialize for checking early stopping condition
     return wrapped
 
